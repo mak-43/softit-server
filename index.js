@@ -59,7 +59,20 @@ async function run() {
             const result=await productCollection.insertOne(product) 
             res.send(result)
           })
-
+          ///delete product 
+          app.delete('/product/:id',async(req,res)=>{
+            const id=req.params.id 
+            const query={_id:ObjectId(id)}
+            const result=await productCollection.deleteOne(query)
+            res.send(result)
+        })
+        //home products
+        app.get('/updatetools',async(req,res)=>{
+          const query={}
+          const cursor=productCollection.find().limit(6).sort({$natural:-1})
+          const product=await cursor.toArray()
+          res.send(product)
+      })
 
 
     }
