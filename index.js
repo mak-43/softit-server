@@ -24,6 +24,7 @@ async function run() {
         await client.connect()
 
         const userCollection = client.db('Softit').collection('user')
+        const productCollection = client.db('Softit').collection('products')
        
 
    
@@ -31,12 +32,32 @@ async function run() {
 
     
         
-        ///
+        ///useAdmin hook
         app.get('/admin/:email', async(req, res) =>{
             const email = req.params.email;
             const user = await userCollection.findOne({email: email});
             const isAdmin = user?.role === 'admin';
             res.send({admin: isAdmin})
+          })
+        
+        ///useVendor hook
+        app.get('/vendor/:email', async(req, res) =>{
+            const email = req.params.email;
+            const user = await userCollection.findOne({email: email});
+            const isVendor = user?.role === 'vendor';
+            res.send({vendor: isVendor})
+          })
+          /// get products 
+          app.get('/products',async(req,res)=>{
+            cursor=productCollection.find().sort({$natural:-1})
+            const product=await cursor.toArray()
+            res.send(product)
+          })
+          ///post product 
+          app.post('/addproduct',async(req,res)=>{
+            const product=req.body 
+            const result=await productCollection.insertOne(product) 
+            res.send(result)
           })
 
 
